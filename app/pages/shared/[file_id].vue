@@ -77,6 +77,19 @@ if (error.value) {
 				:src="`data:${fileType.mimeType};base64,${fileData}`"
 				:alt="fileName"
 				class="rounded-lg shadow w-full max-h-[40vh]" />
+			<audio
+				class="w-full"
+				v-if="fileType.mimeType.startsWith('audio/')"
+				controls>
+				<source :src="`data:${fileType.mimeType};base64,${fileData}`" />
+			</audio>
+			<video
+				class="rounded-lg shadow w-full max-h-[40vh]"
+				v-if="fileType.mimeType.startsWith('video/')"
+				controls>
+				<source :src="`data:${fileType.mimeType};base64,${fileData}`" />
+				Your browser does not support the video tag.
+			</video>
 			<div
 				v-else-if="fileType.mimeType === 'text/plain'"
 				class="resize-y bg-slate-900 p-4 rounded-lg h-[30vh] max-h-[60vh] overflow-y-auto leading-relaxed text-neutral-200 whitespace-pre-wrap break-words">

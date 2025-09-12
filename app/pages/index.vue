@@ -3,7 +3,7 @@ import { stripFileName } from '~/lib/utils'
 
 definePageMeta({ auth: false })
 
-const { data, signIn, signOut, status } = useAuth()
+const { status } = useAuth()
 
 const title = `neru's Vault`
 const description = `This is where neru uploads his stuff.`
@@ -44,7 +44,7 @@ async function uploadToS3(file: File | null) {
 				pending.value = false
 			})
 			if (result.success) {
-				useRouter().push(`/shared/${result.name}`)
+				navigateTo(`/shared/${result.name}`)
 			} else {
 				alert('Upload failed: ' + result.error)
 			}

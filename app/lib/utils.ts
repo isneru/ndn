@@ -16,6 +16,8 @@ export function getFileType(filename: string) {
 			return { extension, mimeType: 'image/gif' }
 		case 'mp4':
 			return { extension, mimeType: 'video/mp4' }
+		case 'mp3':
+			return { extension, mimeType: 'audio/mpeg' }
 		case 'wav':
 			return { extension, mimeType: 'audio/wav' }
 		case 'zip':
