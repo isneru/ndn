@@ -20,46 +20,53 @@ defineOgImageComponent('Template', {
 	description
 })
 
-const fileName = ref('')
+import { ref } from 'vue'
+const fileName = ref<string>('')
 const file = ref<File | null>(null)
+
+function handleFileChange(e: Event) {
+	let files: FileList | null = null
+	if ('dataTransfer' in e) {
+		files = (e as DragEvent).dataTransfer?.files || null
+	} else {
+		files = (e.target as HTMLInputElement).files || null
+	}
+	if (files && files.length && files[0]) {
+		file.value = files[0]
+		fileName.value = files[0].name ?? ''
+	}
+}
 const pending = ref(false)
 
 async function uploadToS3(file: File | null) {
 	if (!file) return
-	const reader = new FileReader()
-	reader.onload = async () => {
-		const base64 = (reader.result as string).split(',')[1]
-		try {
-			pending.value = true
-			const res = await fetch('/api', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					name: stripFileName(file.name),
-					type: file.type,
-					data: base64
-				})
-			})
-			const result = await res.json().finally(() => {
-				pending.value = false
-			})
-			if (result.success) {
-				navigateTo(`/shared/${result.name}`)
-			} else {
-				alert('Upload failed: ' + result.error)
-			}
-		} catch (err) {
-			alert('Upload error: ' + err)
-		}
-	}
-	reader.readAsDataURL(file)
-}
+	pending.value = true
+	try {
+		const formData = new FormData()
+		formData.append('file', file)
+		formData.append('name', stripFileName(file.name))
+		formData.append('type', file.type)
 
-function handleFileChange(e: any) {
-	const files = e.target.files || e.dataTransfer?.files
-	if (files && files.length) {
-		file.value = files[0]
-		fileName.value = files[0].name
+		const res = await fetch('/api', {
+			method: 'POST',
+			body: formData
+		})
+
+		if (!res.ok) {
+			const text = await res.text()
+			throw new Error(`Server error (${res.status}): ${text}`)
+		}
+
+		const result = await res.json()
+		if (result.success) {
+			navigateTo(`/shared/${result.name}`)
+		} else {
+			alert('Upload failed: ' + (result.error || 'Unknown error'))
+		}
+	} catch (err: any) {
+		alert('Upload error: ' + (err?.message || err))
+	} finally {
+		pending.value = false
 	}
 }
 </script>

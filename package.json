@@ -6,6 +6,7 @@
 		"@sidebase/nuxt-auth": "1.0.2",
 		"@supabase/supabase-js": "^2.56.1",
 		"@tailwindcss/vite": "^4.1.12",
+		"formidable": "^3.5.4",
 		"next-auth": "4.21.1",
 		"nuxt": "^4.0.3",
 		"nuxt-og-image": "^5.1.9",
@@ -22,5 +23,8 @@
 		"preview": "nuxt preview",
 		"postinstall": "nuxt prepare"
 	},
-	"type": "module"
+	"type": "module",
+	"devDependencies": {
+		"@types/formidable": "^3.4.5"
+	}
 }
